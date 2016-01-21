@@ -1,36 +1,38 @@
 {
-    "name": "rest-factory.js",
-    "version": "0.0.1",
-    "title": "rest-factory.js",
-    "appPath": "app",
-    "description": "A rest factory for Javascript modules",
-    "keywords": [
-        "image",
-        "video",
-        "gallery"
-    ],
-    "homepage": "https://github.com/TrueRest/rest-facotry.js",
-    "author": {
-        "name": "Fabio Picheli"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/TrueRest/rest-facotry.js.git"
-    },
-    "bugs": "https://github.com/TrueRest/rest-facotry.js/issues",
-    "main": "dist/rest-factory.js",
-    "ignore": [
-        "/*.*",
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "app/bower_components",
-        "test",
-        "tests"
-    ],
-    "authors": [
-        "Fabio Picheli <contato@fabiopicheli.com>"
-    ],
-    "license": "MIT",
-    "dependencies": {}
+  "name": "rest-json-schema.js",
+  "version": "0.0.1",
+  "title": "rest-json-schema.js",
+  "appPath": "app",
+  "description": "A rest factory for Javascript modules",
+  "keywords": [
+    "rest",
+    "rest.js",
+    "json-schema"
+  ],
+  "homepage": "https://github.com/TrueRest/rest-json-schema",
+  "author": {
+    "name": "Fabio Picheli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/TrueRest/rest-json-schema.git"
+  },
+  "bugs": "https://github.com/TrueRest/rest-json-schema/issues",
+  "main": "dist/rest-json-schema.js",
+  "ignore": [
+    "/*.*",
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "authors": [
+    "Fabio Picheli <contato@fabiopicheli.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "rest.js": "*"
+  }
 }

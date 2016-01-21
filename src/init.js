@@ -3,6 +3,8 @@
 *
 * @class init
 */
-window.rest = {
-  'factory' : null
-};
+if(!window.rest){
+  console.error('Rest not found!!!');
+}
+
+window.rest.jsonSchema = {};

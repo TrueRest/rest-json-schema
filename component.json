@@ -1,10 +1,10 @@
 {
-    "name": "rest-factory.js",
+    "name": "rest-json-schema.js",
     "version": "0.0.1",
     "main": [
-        "app/css/rest-factory.js",
+        "app/css/rest-json-schema.js",
         "app/img/sprites.gif",
-        "app/js/rest-factory.js"
+        "app/js/rest-json-schema.js"
     ],
     "dependencies": {
         "jquery": ">=2.1.1"
