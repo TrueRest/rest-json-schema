@@ -1,3 +1,6 @@
-window.rest.jsonSchema.validator = (function(){
+(function(){
+  rest.jsonSchema.validator = function(data){
+
+  }
 
 })();

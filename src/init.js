@@ -5,6 +5,5 @@
 */
 if(!window.rest){
   console.error('Rest not found!!!');
+  return;
 }
-
-window.rest.jsonSchema = {};
