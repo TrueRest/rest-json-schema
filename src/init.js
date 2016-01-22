@@ -5,5 +5,6 @@
 */
 if(!window.rest){
   console.error('Rest not found!!!');
-  return;
 }
+rest.jsonSchema = {};
+rest.jsonSchema.hash = {};

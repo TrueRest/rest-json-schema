@@ -1,13 +1,12 @@
 (function(){
   'use strict';
-
-  function restJsonSchema(data){
+  var jsonSchema = rest.jsonSchema;
+  function RestJsonSchema(data){
     var vm = this;
     rest.extend(vm, data);
-    rest.jsonSchema.validator.call(this);
-    
-
+    jsonSchema.createHash(vm, '#');
+    jsonSchema.createDefinitions(vm.definitions);
   }
 
-  rest.factory.register('rest-json-schema', restJsonSchema);
+  rest.register('rest-json-schema', RestJsonSchema);
 })();

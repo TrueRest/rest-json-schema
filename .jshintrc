@@ -20,6 +20,7 @@
   "smarttabs": true,
   "jasmine": true,
   "globals": {
-    "grunt": false
+    "grunt": false,
+    "rest" : false
   }
 }
