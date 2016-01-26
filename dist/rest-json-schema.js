@@ -21,7 +21,11 @@ rest.jsonSchema.hash = {};
       if(!hash[currentString]){
         hash[currentString] = {};
       }
-      rest.extend(hash[currentString], item);
+      if(typeof item === 'object'){
+        rest.extend(hash[currentString], item);
+      }else{
+        hash[currentString][k] = item;
+      }
 
       if((typeof item === 'object') && (item !== null) && !Array.isArray(item)){
         getHash(item, currentString, hash);
@@ -36,11 +40,30 @@ rest.jsonSchema.hash = {};
 (function(){
   'use strict';
   var jsonSchema = rest.jsonSchema;
+  jsonSchema.updateLink = function(object){
+    if (!object.href){
+      return;
+    }
+
+    if (!object.method){
+      object.method = 'GET';
+    }
+
+    if(!object.encType){
+      object.encType = 'application/json';
+    }
+  };
+
+})();
+
+(function(){
+  'use strict';
+  var jsonSchema = rest.jsonSchema;
   function RestJsonSchema(data){
     var vm = this;
     rest.extend(vm, data);
     jsonSchema.createHash(vm, '#');
-    jsonSchema.createDefinitions(vm.definitions);
+    jsonSchema.setup(vm);
   }
 
   rest.register('rest-json-schema', RestJsonSchema);
@@ -49,16 +72,74 @@ rest.jsonSchema.hash = {};
 (function(){
   'use strict';
   var jsonSchema = rest.jsonSchema;
+  
+  function setProperties() {
+
+  }
+  jsonSchema.setProperties = setProperties;
+
+})();
+
+(function(){
+  'use strict';
+  var jsonSchema = rest.jsonSchema;
   var hash = jsonSchema.hash;
 
-  function getReferences(definitions) {
-    for (var key in definitions) {
-      console.log('##########################');
-      console.log('key:', key);
-      console.log('value:', definitions[key]);
-      var definition = definitions[key];
-      rest.extend(definition, hash[definition.$ref]);
+  // TODO put in util file.
+  function isEmpty(obj) {
 
+      // null and undefined are "empty"
+      if (obj === null || obj === undefined){
+        return true;
+      }
+
+      // Assume if it has a length property with a non-zero value
+      // that that property is correct.
+      if (obj.length > 0) {
+        return false;
+      }
+      if (obj.length === 0){
+        return true;
+      }
+
+      // Otherwise, does it have any properties of its own?
+      // Note that this doesn't handle
+      // toString and valueOf enumeration bugs in IE < 9
+      for (var key in obj) {
+          if (Object.prototype.hasOwnProperty.call(obj, key)){
+            return false;
+          }
+      }
+
+      return true;
+  }
+
+  function createSetup(object) {
+    if(object instanceof Array){
+        for (var x = 0; x < object.length; x++) {
+          createSetup(object[x]);
+        }
+        return;
+    }
+
+    // TODO make a better translate of the elements
+    var attributesToChange = [
+      { 'from'  : 'links',
+        'to'    : 'actions' }
+    ];
+
+    for (var y = 0; y < attributesToChange.length; y++) {
+      var att = attributesToChange[y];
+      if(object[att.from]){
+        object[att.to] = object[att.from];
+        delete object[att.from];
+      }
+    }
+
+    jsonSchema.updateLink(object);
+
+    for (var key in object) {
+      var definition = object[key];
 
       var i;
       if(definition.allOf){
@@ -73,23 +154,20 @@ rest.jsonSchema.hash = {};
       }
       if(definition.anyOf){
         for (i = 0; i < definition.anyOf.length; i++) {
-          rest.extend(definition.anyOf[i], hash[definition.allOf[i].$ref]);
+          rest.extend(definition.anyOf[i], hash[definition.anyOf[i].$ref]);
         }
       }
+
+      if(isEmpty(definition) || typeof definition === 'object'){
+          createSetup(definition);
+      }
+
+      rest.extend(definition, hash[definition.$ref], jsonSchema.validate(definition));
+      delete definition.$ref;
     }
   }
 
-  function createDefinitions(definitions){
-    if(!definitions){
-        return;
-    }
-
-    // Create the definitions
-    getReferences(definitions);
-
-  }
-
-  jsonSchema.createDefinitions = createDefinitions;
+  jsonSchema.setup = createSetup;
 
 })();
 
@@ -99,29 +177,36 @@ rest.jsonSchema.hash = {};
   jsonSchema.validate = function(objectToValidate){
     var vm = this;
 
-    vm.minItems = function(){
-      return this.value.length >= objectToValidate.minItems;
+    function isDefined(value) {
+      return value;
+    }
+
+    vm.validator = {};
+
+    vm.validator.validateMinItems = function(){
+      return (isDefined(objectToValidate) && objectToValidate.value.length >= objectToValidate.minItems) || !objectToValidate.minItems;
     };
 
-    vm.maxItems = function(){
-      return this.value.length <= objectToValidate.maxItems;
+    vm.validator.validateMaxItems = function(){
+      return (isDefined(objectToValidate) && objectToValidate.value.length <= objectToValidate.maxItems) || !objectToValidate.maxItems;
     };
 
-    vm.minimum = function(){
-      return this.value.length >= objectToValidate.minimum;
+    vm.validator.validateMinimum = function(){
+      return (isDefined(objectToValidate) && objectToValidate.value.length <= objectToValidate.maxItems) || !objectToValidate.maxItems;
     };
 
-    vm.maximum = function(){
-      return this.value.length <= objectToValidate.maximum;
+    vm.validator.validateMaximum = function(){
+      return (isDefined(objectToValidate) && objectToValidate.value.length <= objectToValidate.maximum) || !objectToValidate.maximum;
     };
 
-    vm.default = function(){
-      if(!this.value){
-        return objectToValidate.default;
+    vm.validator.setDefault = function(){
+      if(!objectToValidate.value){
+        objectToValidate.value = objectToValidate.default;
+        return vm.default;
       }
     };
 
-    return vm;
+    return vm.validator;
   };
 
 })();

@@ -5,7 +5,7 @@
     var vm = this;
     rest.extend(vm, data);
     jsonSchema.createHash(vm, '#');
-    jsonSchema.createDefinitions(vm.definitions);
+    jsonSchema.setup(vm);
   }
 
   rest.register('rest-json-schema', RestJsonSchema);

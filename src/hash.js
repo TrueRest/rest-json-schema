@@ -10,8 +10,12 @@
       if(!hash[currentString]){
         hash[currentString] = {};
       }
-      hash[currentString][k] = item;
-      
+      if(typeof item === 'object'){
+        rest.extend(hash[currentString], item);
+      }else{
+        hash[currentString][k] = item;
+      }
+
       if((typeof item === 'object') && (item !== null) && !Array.isArray(item)){
         getHash(item, currentString, hash);
       }
